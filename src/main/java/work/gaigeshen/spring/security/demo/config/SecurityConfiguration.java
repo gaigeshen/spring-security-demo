@@ -2,8 +2,6 @@ package work.gaigeshen.spring.security.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,16 +9,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
-import work.gaigeshen.spring.security.demo.security.DefaultAuthenticationProvider;
-import work.gaigeshen.spring.security.demo.security.DefaultUserDescriptor;
-import work.gaigeshen.spring.security.demo.security.UserDescriptorLoader;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
 import work.gaigeshen.spring.security.demo.security.accesstoken.DefaultAccessTokenCreator;
-import work.gaigeshen.spring.security.demo.security.web.*;
-import work.gaigeshen.spring.security.demo.web.JsonAccessTokenAuthenticationResultHandler;
+import work.gaigeshen.spring.security.demo.security.web.AccessTokenAuthenticationFilter;
+import work.gaigeshen.spring.security.demo.security.web.AuthorizationExpiredEventListener;
+import work.gaigeshen.spring.security.demo.security.web.AuthenticationHandler;
+import work.gaigeshen.spring.security.demo.security.web.LogoutResultHandler;
+import work.gaigeshen.spring.security.demo.web.JsonAccessTokenAuthenticationHandler;
 import work.gaigeshen.spring.security.demo.web.JsonAccessTokenLogoutResultHandler;
 
 import java.time.Duration;
@@ -46,39 +42,18 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationResultExpiredEventListener authenticationResultExpiredEventListener() {
-        return new AuthenticationResultExpiredEventListener(accessTokenCreator());
+    public AuthorizationExpiredEventListener authenticationResultExpiredEventListener() {
+        return new AuthorizationExpiredEventListener(accessTokenCreator());
     }
 
     @Bean
-    public AuthenticationResultHandler authenticationResultHandler() {
-        return new JsonAccessTokenAuthenticationResultHandler(accessTokenCreator());
+    public AuthenticationHandler authenticationResultHandler() {
+        return new JsonAccessTokenAuthenticationHandler(accessTokenCreator());
     }
 
     @Bean
     public LogoutResultHandler logoutResultHandler() {
         return new JsonAccessTokenLogoutResultHandler(accessTokenCreator());
-    }
-
-    @Bean
-    public UserDescriptorLoader userDescriptorLoader() {
-        return token -> DefaultUserDescriptor.builder()
-                .userId("1").username("admin").password(passwordEncoder().encode("123456")).authorities(Collections.emptyList())
-                .build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(new DefaultAuthenticationProvider(userDescriptorLoader(), passwordEncoder()));
-    }
-
-    @Bean
-    public LoginFilter loginFilter() {
-        LoginFilter loginFilter = new LoginFilter(new AntPathRequestMatcher("/login", "POST"), authenticationManager());
-        loginFilter.setAuthenticationDetailsSource(new WebParametersAdditionalAuthenticationDetailsSource());
-        loginFilter.setAuthenticationSuccessHandler(authenticationResultHandler());
-        loginFilter.setAuthenticationFailureHandler(authenticationResultHandler());
-        return loginFilter;
     }
 
     @Bean
@@ -88,10 +63,6 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authenticationManager(authenticationManager());
-
-        http.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class)
-                        .addFilterBefore(accessTokenAuthenticationFilter(), LoginFilter.class);
 
         http.csrf().disable().cors().configurationSource(request -> {
             CorsConfiguration corsConfiguration = new CorsConfiguration();

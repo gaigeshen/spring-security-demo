@@ -1,6 +1,6 @@
 package work.gaigeshen.spring.security.demo.security.accesstoken;
 
-import work.gaigeshen.spring.security.demo.security.UserDescriptor;
+import work.gaigeshen.spring.security.demo.security.Authorization;
 
 /**
  *
@@ -10,7 +10,7 @@ public interface AccessTokenCreator {
 
   void invalidate(String token);
 
-  String createToken(UserDescriptor descriptor);
+  String createToken(Authorization authorization);
 
-  UserDescriptor validateToken(String token);
+  Authorization validateToken(String token);
 }

@@ -7,15 +7,15 @@ import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreat
  *
  * @author gaigeshen
  */
-public class AuthenticationResultExpiredEventListener implements ApplicationListener<AuthenticationResultExpiredEvent> {
+public class AuthorizationExpiredEventListener implements ApplicationListener<AuthorizationExpiredEvent> {
 
     private final AccessTokenCreator accessTokenCreator;
 
-    public AuthenticationResultExpiredEventListener(AccessTokenCreator accessTokenCreator) {
+    public AuthorizationExpiredEventListener(AccessTokenCreator accessTokenCreator) {
         this.accessTokenCreator = accessTokenCreator;
     }
 
     @Override
-    public void onApplicationEvent(AuthenticationResultExpiredEvent event) {
+    public void onApplicationEvent(AuthorizationExpiredEvent event) {
     }
 }

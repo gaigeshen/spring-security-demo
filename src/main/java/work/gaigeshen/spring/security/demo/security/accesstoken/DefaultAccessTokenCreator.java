@@ -3,7 +3,7 @@ package work.gaigeshen.spring.security.demo.security.accesstoken;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
-import work.gaigeshen.spring.security.demo.security.UserDescriptor;
+import work.gaigeshen.spring.security.demo.security.Authorization;
 
 import java.time.Duration;
 import java.util.Map;
@@ -17,14 +17,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultAccessTokenCreator implements AccessTokenCreator {
 
-    private final Map<UserDescriptor, String> userDescriptorTokens = new ConcurrentHashMap<>();
+    private final Map<Authorization, String> authorizationTokens = new ConcurrentHashMap<>();
 
-    private final Cache<String, UserDescriptor> userDescriptors;
+    private final Cache<String, Authorization> authorizations;
 
     private DefaultAccessTokenCreator(CacheBuilder<Object, Object> cacheBuilder) {
-        userDescriptors = cacheBuilder.removalListener((RemovalListener<String, UserDescriptor>) ntf -> {
-            UserDescriptor userDescriptor = ntf.getValue();
-            userDescriptorTokens.remove(userDescriptor, ntf.getKey());
+        authorizations = cacheBuilder.removalListener((RemovalListener<String, Authorization>) ntf -> {
+            Authorization authorization = ntf.getValue();
+            authorizationTokens.remove(authorization, ntf.getKey());
         }).build();
     }
 
@@ -40,23 +40,23 @@ public class DefaultAccessTokenCreator implements AccessTokenCreator {
 
     @Override
     public void invalidate(String token) {
-        userDescriptors.invalidate(token);
+        authorizations.invalidate(token);
     }
 
     @Override
-    public String createToken(UserDescriptor descriptor) {
+    public String createToken(Authorization authorization) {
         String newToken = createTokenInternal();
-        String previousToken = userDescriptorTokens.put(descriptor, newToken);
+        String previousToken = authorizationTokens.put(authorization, newToken);
         if (Objects.nonNull(previousToken)) {
             invalidate(previousToken);
         }
-        userDescriptors.put(newToken, descriptor);
+        this.authorizations.put(newToken, authorization);
         return newToken;
     }
 
     @Override
-    public UserDescriptor validateToken(String token) {
-        return userDescriptors.getIfPresent(token);
+    public Authorization validateToken(String token) {
+        return authorizations.getIfPresent(token);
     }
 
     private String createTokenInternal() {
