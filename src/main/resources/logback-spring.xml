@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <!-- 包含默认的配置 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <!-- 取应用的名称 -->
+    <springProperty scope="context" name="application" source="spring.application.name" defaultValue="spring" />
+    <!-- 控制台输出的格式 -->
+    <property name="CONSOLE_PATTERN" value="%clr(%d{ISO8601}){faint} %clr(%5p) %clr([%15.15t]){faint} [%tid] %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx" />
+    <!-- 文件输出的格式 -->
+    <property name="FILE_PATTERN" value="%d{ISO8601} %5p [%t] [%tid] %-40.40logger{39} : %m%n%wEx" />
+    <!-- 文件位置 -->
+    <property name="FILE" value="${java.io.tmpdir}/${application}/${application}.log" />
+    <!-- 控制台配置设置跟踪标识 -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${CONSOLE_PATTERN}</pattern>
+            </layout>
+        </encoder>
+    </appender>
+    <!-- 日志收集到监控平台 -->
+    <appender name="Skywalking" class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.log.GRPCLogClientAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.mdc.TraceIdMDCPatternLogbackLayout">
+                <pattern>${FILE_PATTERN}</pattern>
+            </layout>
+        </encoder>
+    </appender>
+    <!-- 文件配置设置滚动策略 -->
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE}</file>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${FILE}.%d{yyyy-MM-dd}.%i.gz}</fileNamePattern>
+            <cleanHistoryOnStart>false</cleanHistoryOnStart>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>0</totalSizeCap>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <!-- 默认日志级别 -->
+    <root level="info">
+        <appender-ref ref="Console" />
+        <appender-ref ref="Skywalking" />
+        <appender-ref ref="RollingFile" />
+    </root>
+    <!-- 自定义日志级别 -->
+    <logger name="work.gaigeshen" level="debug" />
+</configuration>
