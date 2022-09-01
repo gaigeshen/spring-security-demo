@@ -17,5 +17,6 @@ public class AuthorizationExpiredEventListener implements ApplicationListener<Au
 
     @Override
     public void onApplicationEvent(AuthorizationExpiredEvent event) {
+        accessTokenCreator.invalidate(event.getAuthorization());
     }
 }

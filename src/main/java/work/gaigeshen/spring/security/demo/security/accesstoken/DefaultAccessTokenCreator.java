@@ -44,6 +44,14 @@ public class DefaultAccessTokenCreator implements AccessTokenCreator {
     }
 
     @Override
+    public void invalidate(Authorization authorization) {
+        String token = authorizationTokens.get(authorization);
+        if (Objects.nonNull(token)) {
+            invalidate(token);
+        }
+    }
+
+    @Override
     public String createToken(Authorization authorization) {
         String newToken = createTokenInternal();
         String previousToken = authorizationTokens.put(authorization, newToken);

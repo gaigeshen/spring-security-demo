@@ -10,6 +10,8 @@ public interface AccessTokenCreator {
 
   void invalidate(String token);
 
+  void invalidate(Authorization authorization);
+
   String createToken(Authorization authorization);
 
   Authorization validateToken(String token);
