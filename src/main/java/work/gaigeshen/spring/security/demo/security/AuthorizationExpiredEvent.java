@@ -1,7 +1,6 @@
-package work.gaigeshen.spring.security.demo.security.web;
+package work.gaigeshen.spring.security.demo.security;
 
 import org.springframework.context.ApplicationEvent;
-import work.gaigeshen.spring.security.demo.security.Authorization;
 
 /**
  *

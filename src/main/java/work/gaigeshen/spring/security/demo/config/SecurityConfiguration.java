@@ -10,14 +10,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import work.gaigeshen.spring.security.demo.security.AuthorizationExpiredEventListener;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
 import work.gaigeshen.spring.security.demo.security.accesstoken.DefaultAccessTokenCreator;
-import work.gaigeshen.spring.security.demo.security.web.AccessTokenAuthenticationFilter;
-import work.gaigeshen.spring.security.demo.security.web.AuthorizationExpiredEventListener;
-import work.gaigeshen.spring.security.demo.security.web.AuthenticationHandler;
-import work.gaigeshen.spring.security.demo.security.web.LogoutResultHandler;
-import work.gaigeshen.spring.security.demo.web.JsonAccessTokenAuthenticationHandler;
-import work.gaigeshen.spring.security.demo.web.JsonAccessTokenLogoutResultHandler;
+import work.gaigeshen.spring.security.demo.security.web.authentication.AccessTokenAuthenticationFilter;
+import work.gaigeshen.spring.security.demo.security.web.authentication.AuthenticationHandler;
+import work.gaigeshen.spring.security.demo.security.web.authentication.JsonAccessTokenAuthenticationHandler;
+import work.gaigeshen.spring.security.demo.security.web.logout.JsonAccessTokenLogoutHandler;
+import work.gaigeshen.spring.security.demo.security.web.logout.LogoutHandler;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -42,18 +42,18 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthorizationExpiredEventListener authenticationResultExpiredEventListener() {
+    public AuthorizationExpiredEventListener authorizationExpiredEventListener() {
         return new AuthorizationExpiredEventListener(accessTokenCreator());
     }
 
     @Bean
-    public AuthenticationHandler authenticationResultHandler() {
+    public AuthenticationHandler authenticationHandler() {
         return new JsonAccessTokenAuthenticationHandler(accessTokenCreator());
     }
 
     @Bean
-    public LogoutResultHandler logoutResultHandler() {
-        return new JsonAccessTokenLogoutResultHandler(accessTokenCreator());
+    public LogoutHandler logoutResultHandler() {
+        return new JsonAccessTokenLogoutHandler(accessTokenCreator());
     }
 
     @Bean

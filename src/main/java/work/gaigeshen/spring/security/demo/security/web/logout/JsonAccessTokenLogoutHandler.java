@@ -1,10 +1,9 @@
-package work.gaigeshen.spring.security.demo.web;
+package work.gaigeshen.spring.security.demo.security.web.logout;
 
 import org.springframework.security.core.Authentication;
 import work.gaigeshen.spring.security.demo.commons.json.JsonCodec;
 import work.gaigeshen.spring.security.demo.commons.web.Results;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
-import work.gaigeshen.spring.security.demo.security.web.AccessTokenLogoutResultHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,9 +12,9 @@ import java.io.IOException;
 /**
  * @author gaigeshen
  */
-public class JsonAccessTokenLogoutResultHandler extends AccessTokenLogoutResultHandler {
+public class JsonAccessTokenLogoutHandler extends AccessTokenLogoutHandler {
 
-    public JsonAccessTokenLogoutResultHandler(AccessTokenCreator accessTokenCreator) {
+    public JsonAccessTokenLogoutHandler(AccessTokenCreator accessTokenCreator) {
         super(accessTokenCreator);
     }
 

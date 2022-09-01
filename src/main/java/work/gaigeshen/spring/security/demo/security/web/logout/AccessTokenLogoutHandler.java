@@ -1,8 +1,9 @@
-package work.gaigeshen.spring.security.demo.security.web;
+package work.gaigeshen.spring.security.demo.security.web.logout;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
+import work.gaigeshen.spring.security.demo.security.web.authentication.AccessTokenAuthenticationFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author gaigeshen
  */
-public abstract class AccessTokenLogoutResultHandler implements LogoutResultHandler {
+public abstract class AccessTokenLogoutHandler implements LogoutHandler {
 
     private final AccessTokenCreator accessTokenCreator;
 
-    public AccessTokenLogoutResultHandler(AccessTokenCreator accessTokenCreator) {
+    public AccessTokenLogoutHandler(AccessTokenCreator accessTokenCreator) {
         this.accessTokenCreator = accessTokenCreator;
     }
 

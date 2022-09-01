@@ -1,9 +1,9 @@
-package work.gaigeshen.spring.security.demo.security.web;
+package work.gaigeshen.spring.security.demo.security.web.authentication;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import work.gaigeshen.spring.security.demo.security.AuthenticatedToken;
+import work.gaigeshen.spring.security.demo.security.AuthenticationToken;
 import work.gaigeshen.spring.security.demo.security.Authorization;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
 
@@ -37,7 +37,7 @@ public class AccessTokenAuthenticationFilter extends OncePerRequestFilter {
         }
         Authorization authorization = accessTokenCreator.validateToken(accessToken);
         if (Objects.nonNull(authorization)) {
-            SecurityContextHolder.getContext().setAuthentication(AuthenticatedToken.create(authorization));
+            SecurityContextHolder.getContext().setAuthentication(AuthenticationToken.authenticated(authorization));
         }
         chain.doFilter(req, resp);
     }

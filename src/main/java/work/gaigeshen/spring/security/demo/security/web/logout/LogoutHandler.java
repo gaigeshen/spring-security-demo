@@ -1,7 +1,6 @@
-package work.gaigeshen.spring.security.demo.security.web;
+package work.gaigeshen.spring.security.demo.security.web.logout;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import javax.servlet.ServletException;
@@ -13,7 +12,7 @@ import java.io.IOException;
  *
  * @author gaigeshen
  */
-public interface LogoutResultHandler extends LogoutHandler, LogoutSuccessHandler {
+public interface LogoutHandler extends org.springframework.security.web.authentication.logout.LogoutHandler, LogoutSuccessHandler {
 
     @Override
     void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication);

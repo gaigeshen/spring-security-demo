@@ -1,13 +1,12 @@
-package work.gaigeshen.spring.security.demo.web;
+package work.gaigeshen.spring.security.demo.security.web.authentication;
 
 import org.springframework.security.core.AuthenticationException;
 import work.gaigeshen.spring.security.demo.commons.json.JsonCodec;
 import work.gaigeshen.spring.security.demo.commons.web.ErrorResults;
 import work.gaigeshen.spring.security.demo.commons.web.Results;
-import work.gaigeshen.spring.security.demo.security.AuthenticatedToken;
+import work.gaigeshen.spring.security.demo.security.AuthenticationToken;
 import work.gaigeshen.spring.security.demo.security.Authorization;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
-import work.gaigeshen.spring.security.demo.security.web.AbstractAccessTokenAuthenticationHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,14 +17,14 @@ import java.util.Map;
 /**
  * @author gaigeshen
  */
-public class JsonAccessTokenAuthenticationHandler extends AbstractAccessTokenAuthenticationHandler {
+public class JsonAccessTokenAuthenticationHandler extends AccessTokenAuthenticationHandler {
 
     public JsonAccessTokenAuthenticationHandler(AccessTokenCreator accessTokenCreator) {
         super(accessTokenCreator);
     }
 
     @Override
-    protected void renderSuccessContent(HttpServletRequest req, HttpServletResponse resp, AuthenticatedToken token) throws IOException {
+    protected void renderSuccessContent(HttpServletRequest req, HttpServletResponse resp, AuthenticationToken token) throws IOException {
         resp.setCharacterEncoding("utf-8");
         resp.setContentType("application/json");
         Authorization authorization = token.getAuthorization();

@@ -1,4 +1,4 @@
-package work.gaigeshen.spring.security.demo.security.web;
+package work.gaigeshen.spring.security.demo.security.web.authentication;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,8 +7,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import work.gaigeshen.spring.security.demo.security.AuthenticatingToken;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import work.gaigeshen.spring.security.demo.security.AuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,12 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author gaigeshen
  */
-public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public abstract class AuthenticationFilter extends AbstractAuthenticationProcessingFilter implements AuthenticationSuccessHandler, AuthenticationFailureHandler {
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager) {
-        super(new AntPathRequestMatcher("/login", "POST"), authenticationManager);
-        setAuthenticationSuccessHandler(null);
-        setAuthenticationFailureHandler(null);
+    protected AuthenticationFilter(RequestMatcher requestMatcher, AuthenticationManager authenticationManager) {
+        super(requestMatcher, authenticationManager);
     }
 
     @Override
@@ -34,10 +34,8 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         if (StringUtils.isAnyBlank(username, password)) {
             throw new BadCredentialsException("");
         }
-        Object details = authenticationDetailsSource.buildDetails(request);
-
-        AuthenticatingToken token = new AuthenticatingToken(username, password, details);
-
+        AuthenticationToken token = AuthenticationToken.unauthenticated(username, password);
+        token.setDetails(authenticationDetailsSource.buildDetails(request));
         return getAuthenticationManager().authenticate(token);
     }
 }

@@ -1,10 +1,10 @@
-package work.gaigeshen.spring.security.demo.security.web;
+package work.gaigeshen.spring.security.demo.security.web.authentication;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import work.gaigeshen.spring.security.demo.security.AuthenticatedToken;
+import work.gaigeshen.spring.security.demo.security.AuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +17,7 @@ public abstract class AuthenticationHandler implements AuthenticationSuccessHand
 
     @Override
     public final void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication authentication) throws IOException {
-        handleSuccess(req, resp, (AuthenticatedToken) authentication);
+        handleSuccess(req, resp, (AuthenticationToken) authentication);
     }
 
     @Override
@@ -25,7 +25,7 @@ public abstract class AuthenticationHandler implements AuthenticationSuccessHand
         handleFailure(req, resp, exception);
     }
 
-    protected abstract void handleSuccess(HttpServletRequest req, HttpServletResponse resp, AuthenticatedToken token) throws IOException;
+    protected abstract void handleSuccess(HttpServletRequest req, HttpServletResponse resp, AuthenticationToken token) throws IOException;
 
     protected abstract void handleFailure(HttpServletRequest req, HttpServletResponse resp, AuthenticationException exception) throws IOException;
 }
