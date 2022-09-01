@@ -3,6 +3,8 @@ package work.gaigeshen.spring.security.demo.security;
 import org.springframework.context.ApplicationListener;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
 
+import java.util.Objects;
+
 /**
  *
  * @author gaigeshen
@@ -17,6 +19,10 @@ public class AuthorizationExpiredEventListener implements ApplicationListener<Au
 
     @Override
     public void onApplicationEvent(AuthorizationExpiredEvent event) {
-        accessTokenCreator.invalidate(event.getAuthorization());
+        Authorization authorization = event.getAuthorization();
+        if (Objects.isNull(authorization)) {
+            return;
+        }
+        accessTokenCreator.invalidate(authorization);
     }
 }

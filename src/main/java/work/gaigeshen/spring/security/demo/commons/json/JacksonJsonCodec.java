@@ -1,7 +1,6 @@
 package work.gaigeshen.spring.security.demo.commons.json;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
@@ -23,7 +22,7 @@ public class JacksonJsonCodec implements JsonCodec {
     }
 
     public JacksonJsonCodec() {
-        this(new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+        this(new ObjectMapper());
     }
 
     @Override

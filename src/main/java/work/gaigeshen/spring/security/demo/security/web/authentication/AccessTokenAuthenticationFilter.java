@@ -25,20 +25,25 @@ public class AccessTokenAuthenticationFilter extends OncePerRequestFilter {
     private final AccessTokenCreator accessTokenCreator;
 
     public AccessTokenAuthenticationFilter(AccessTokenCreator accessTokenCreator) {
+        if (Objects.isNull(accessTokenCreator)) {
+            throw new IllegalArgumentException("access token creator cannot be null");
+        }
         this.accessTokenCreator = accessTokenCreator;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws ServletException, IOException {
-        String accessToken = req.getHeader(ACCESS_TOKEN_HEADER);
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
+        String accessToken = request.getHeader(ACCESS_TOKEN_HEADER);
         if (StringUtils.isBlank(accessToken)) {
-            chain.doFilter(req, resp);
+            chain.doFilter(request, response);
             return;
         }
         Authorization authorization = accessTokenCreator.validateToken(accessToken);
         if (Objects.nonNull(authorization)) {
             SecurityContextHolder.getContext().setAuthentication(AuthenticationToken.authenticated(authorization));
         }
-        chain.doFilter(req, resp);
+        chain.doFilter(request, response);
     }
 }

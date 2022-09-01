@@ -5,7 +5,7 @@ package work.gaigeshen.spring.security.demo.security;
  */
 public interface UserService {
 
-    DefaultAuthorization findAuthorization(String username);
+    Authorization findAuthorization(String username);
 
     UserPassword findUserPassword(String username);
 }

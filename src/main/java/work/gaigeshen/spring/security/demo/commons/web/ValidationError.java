@@ -15,6 +15,6 @@ public class ValidationError {
     }
 
     public Map<String, String> getViolations() {
-        return Collections.unmodifiableMap(violations);
+        return violations;
     }
 }

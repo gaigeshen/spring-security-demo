@@ -2,6 +2,8 @@ package work.gaigeshen.spring.security.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -9,19 +11,22 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import work.gaigeshen.spring.security.demo.security.AuthorizationExpiredEventListener;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
 import work.gaigeshen.spring.security.demo.security.accesstoken.DefaultAccessTokenCreator;
+import work.gaigeshen.spring.security.demo.security.web.authentication.AbstractAuthenticationFilter;
+import work.gaigeshen.spring.security.demo.security.web.authentication.AbstractAuthenticationProvider;
 import work.gaigeshen.spring.security.demo.security.web.authentication.AccessTokenAuthenticationFilter;
-import work.gaigeshen.spring.security.demo.security.web.authentication.AuthenticationHandler;
-import work.gaigeshen.spring.security.demo.security.web.authentication.JsonAccessTokenAuthenticationHandler;
-import work.gaigeshen.spring.security.demo.security.web.logout.JsonAccessTokenLogoutHandler;
-import work.gaigeshen.spring.security.demo.security.web.logout.LogoutHandler;
+import work.gaigeshen.spring.security.demo.security.web.logout.AbstractLogoutHandler;
+import work.gaigeshen.spring.security.demo.security.web.logout.DefaultAccessTokenLogoutHandler;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author gaigeshen
@@ -30,6 +35,17 @@ import java.util.Collections;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration {
+
+    private final List<AbstractAuthenticationProvider> authenticationProviders;
+
+    public SecurityConfiguration(List<AbstractAuthenticationProvider> authenticationProviders) {
+        this.authenticationProviders = authenticationProviders;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return new ProviderManager(new ArrayList<>(authenticationProviders));
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,22 +63,19 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationHandler authenticationHandler() {
-        return new JsonAccessTokenAuthenticationHandler(accessTokenCreator());
-    }
-
-    @Bean
-    public LogoutHandler logoutResultHandler() {
-        return new JsonAccessTokenLogoutHandler(accessTokenCreator());
-    }
-
-    @Bean
     public AccessTokenAuthenticationFilter accessTokenAuthenticationFilter() {
         return new AccessTokenAuthenticationFilter(accessTokenCreator());
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public AbstractLogoutHandler logoutHandler() {
+        return DefaultAccessTokenLogoutHandler.create(accessTokenCreator());
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AbstractAuthenticationFilter authenticationFilter) throws Exception {
+        http.authenticationManager(authenticationManager())
+                        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.csrf().disable().cors().configurationSource(request -> {
             CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -75,8 +88,7 @@ public class SecurityConfiguration {
             return corsConfiguration;
         });
         http.authorizeRequests().antMatchers("/login").permitAll().antMatchers("/register").permitAll().anyRequest().authenticated();
-        http.logout().addLogoutHandler(logoutResultHandler()).logoutSuccessHandler(logoutResultHandler())
-                .and()
+        http.logout().addLogoutHandler(logoutHandler()).logoutSuccessHandler(logoutHandler()).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
     }
