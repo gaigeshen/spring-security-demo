@@ -16,9 +16,6 @@ public class GsonJsonCodec implements JsonCodec {
   private final Gson gson;
 
   public GsonJsonCodec(Gson gson) {
-    if (Objects.isNull(gson)) {
-      throw new IllegalArgumentException("gson cannot be null");
-    }
     this.gson = gson;
   }
 
@@ -28,42 +25,22 @@ public class GsonJsonCodec implements JsonCodec {
 
   @Override
   public String encode(Object obj) {
-    if (Objects.isNull(obj)) {
-      throw new IllegalArgumentException("object cannot be null");
-    }
     return gson.toJson(obj);
   }
 
   @Override
   public <T> T decode(String json, Class<T> resultClass) {
-    if (Objects.isNull(json) || Objects.isNull(resultClass)) {
-      throw new IllegalArgumentException("json and result class cannot be null");
-    }
     return gson.fromJson(json, resultClass);
   }
 
   @Override
   public Map<String, Object> decodeObject(String json) {
-    if (Objects.isNull(json)) {
-      throw new IllegalArgumentException("json cannot be null");
-    }
-    JsonElement jsonElement = JsonParser.parseString(json);
-    if (!(jsonElement instanceof JsonObject)) {
-      throw new IllegalArgumentException("could not decode json to map instance: " + json);
-    }
-    return convertObject(jsonElement.getAsJsonObject());
+    return convertObject(JsonParser.parseString(json).getAsJsonObject());
   }
 
   @Override
   public Collection<Object> decodeArray(String json) {
-    if (Objects.isNull(json)) {
-      throw new IllegalArgumentException("json cannot be null");
-    }
-    JsonElement jsonElement = JsonParser.parseString(json);
-    if (!(jsonElement instanceof JsonArray)) {
-      throw new IllegalArgumentException("could not decode json to list instance: " + json);
-    }
-    return convertArray(jsonElement.getAsJsonArray());
+    return convertArray(JsonParser.parseString(json).getAsJsonArray());
   }
 
   private Map<String, Object> convertObject(JsonObject jsonObject) {
