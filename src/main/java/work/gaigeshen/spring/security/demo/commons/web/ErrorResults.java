@@ -5,11 +5,9 @@ import org.springframework.beans.PropertyBatchUpdateException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -19,6 +17,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import work.gaigeshen.spring.security.demo.security.AuthenticationTokenMissingException;
+import work.gaigeshen.spring.security.demo.security.AuthorizationNotFoundException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -89,10 +89,10 @@ public abstract class ErrorResults {
     }
 
     public static Result<?> createResult(AuthenticationException ex) {
-        if (ex instanceof UsernameNotFoundException) {
+        if (ex instanceof AuthenticationTokenMissingException) {
             return Results.create(AuthenticationErrorResultCode.AUTHENTICATION_TOKEN_INVALID);
         }
-        if (ex instanceof BadCredentialsException) {
+        if (ex instanceof AuthorizationNotFoundException) {
             return Results.create(AuthenticationErrorResultCode.AUTHENTICATION_TOKEN_INVALID);
         }
         if (ex instanceof DisabledException) {
