@@ -3,7 +3,6 @@ package work.gaigeshen.spring.security.demo.security.web;
 import work.gaigeshen.spring.security.demo.commons.json.JsonCodec;
 import work.gaigeshen.spring.security.demo.commons.web.Result;
 import work.gaigeshen.spring.security.demo.commons.web.Results;
-import work.gaigeshen.spring.security.demo.security.web.error.AccessDeniedErrorResultCode;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

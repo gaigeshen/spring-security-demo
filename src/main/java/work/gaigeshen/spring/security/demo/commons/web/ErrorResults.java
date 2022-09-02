@@ -1,4 +1,4 @@
-package work.gaigeshen.spring.security.demo.commons.web.error;
+package work.gaigeshen.spring.security.demo.commons.web;
 
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.beans.PropertyBatchUpdateException;
@@ -13,9 +13,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
-import work.gaigeshen.spring.security.demo.commons.web.Result;
-import work.gaigeshen.spring.security.demo.commons.web.Results;
-import work.gaigeshen.spring.security.demo.commons.web.ValidationError;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;

@@ -1,4 +1,4 @@
-package work.gaigeshen.spring.security.demo.security.web.error;
+package work.gaigeshen.spring.security.demo.security.web;
 
 import work.gaigeshen.spring.security.demo.commons.web.ResultCode;
 

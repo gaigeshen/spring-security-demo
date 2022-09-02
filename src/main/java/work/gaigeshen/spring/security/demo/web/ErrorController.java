@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.handler.DispatcherServletWebRequest;
-import work.gaigeshen.spring.security.demo.commons.web.error.ErrorResults;
+import work.gaigeshen.spring.security.demo.commons.web.ErrorResults;
 import work.gaigeshen.spring.security.demo.commons.web.Result;
 
 import javax.servlet.http.HttpServletRequest;

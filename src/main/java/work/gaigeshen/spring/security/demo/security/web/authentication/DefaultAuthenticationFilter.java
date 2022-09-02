@@ -12,7 +12,7 @@ import work.gaigeshen.spring.security.demo.commons.web.Results;
 import work.gaigeshen.spring.security.demo.security.AuthenticationToken;
 import work.gaigeshen.spring.security.demo.security.Authorization;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
-import work.gaigeshen.spring.security.demo.security.web.error.AuthenticationErrorResults;
+import work.gaigeshen.spring.security.demo.security.web.AuthenticationErrorResults;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
