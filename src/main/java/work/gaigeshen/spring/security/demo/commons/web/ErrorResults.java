@@ -2,13 +2,9 @@ package work.gaigeshen.spring.security.demo.commons.web;
 
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.beans.PropertyBatchUpdateException;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -16,7 +12,6 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -26,42 +21,37 @@ public abstract class ErrorResults {
 
     private ErrorResults() { }
 
-    public static Result<?> createResult(Throwable exception, int httpStatus) {
-        if (Objects.isNull(exception)) {
-            switch (httpStatus) {
-                case 401:
-                    return Results.create(HttpStatusErrorResultCode.UNAUTHORIZED);
-                case 403:
-                    return Results.create(HttpStatusErrorResultCode.FORBIDDEN);
-            }
-            return Results.create(HttpStatusErrorResultCode.INTERNAL_SERVER_ERROR);
+    public static Result<?> createResult(Throwable ex, int httpStatus) {
+        switch (httpStatus) {
+            case 401:
+                return Results.create(HttpStatusErrorResultCode.UNAUTHORIZED);
+            case 402:
+                return Results.create(HttpStatusErrorResultCode.PAYMENT_REQUIRED);
+            case 403:
+                return Results.create(HttpStatusErrorResultCode.FORBIDDEN);
+            case 404:
+                return Results.create(HttpStatusErrorResultCode.NOT_FOUND);
+            case 405:
+                return Results.create(HttpStatusErrorResultCode.METHOD_NOT_ALLOWED);
+            case 406:
+                return Results.create(HttpStatusErrorResultCode.NOT_ACCEPTABLE);
+            case 415:
+                return Results.create(HttpStatusErrorResultCode.UNSUPPORTED_MEDIA_TYPE);
+            case 501:
+                return Results.create(HttpStatusErrorResultCode.NOT_IMPLEMENTED);
+            case 502:
+                return Results.create(HttpStatusErrorResultCode.BAD_GATEWAY);
+            case 503:
+                return Results.create(HttpStatusErrorResultCode.SERVICE_UNAVAILABLE);
         }
-        return createResult(exception);
+        return createResult(ex);
     }
 
     public static Result<?> createResult(Throwable ex) {
-        if (ex instanceof HttpRequestMethodNotSupportedException) {
-            return Results.create(HttpStatusErrorResultCode.METHOD_NOT_ALLOWED);
-        }
-        if (ex instanceof HttpMessageNotReadableException) {
-            return Results.create(HttpStatusErrorResultCode.UNSUPPORTED_MEDIA_TYPE);
-        }
-        if (ex instanceof HttpMediaTypeNotSupportedException) {
-            return Results.create(HttpStatusErrorResultCode.UNSUPPORTED_MEDIA_TYPE);
-        }
-        if (ex instanceof AccessDeniedException) {
-            return Results.create(HttpStatusErrorResultCode.UNAUTHORIZED);
-        }
-        if (ex instanceof MissingServletRequestParameterException) {
-            return Results.create(HttpStatusErrorResultCode.BAD_REQUEST);
-        }
-        if (ex instanceof MissingServletRequestPartException) {
-            return Results.create(HttpStatusErrorResultCode.BAD_REQUEST);
-        }
-        if (ex instanceof MethodArgumentTypeMismatchException) {
-            return Results.create(HttpStatusErrorResultCode.BAD_REQUEST);
-        }
-        if (ex instanceof PropertyBatchUpdateException) {
+        if (ex instanceof MissingServletRequestParameterException
+            || ex instanceof MissingServletRequestPartException
+            || ex instanceof MethodArgumentTypeMismatchException
+            || ex instanceof PropertyBatchUpdateException) {
             return Results.create(HttpStatusErrorResultCode.BAD_REQUEST);
         }
         if (ex instanceof MethodArgumentNotValidException) {
