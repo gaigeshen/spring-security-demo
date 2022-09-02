@@ -10,17 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * 默认的访问令牌登出处理器，将会输出默认的响应内容
  *
  * @author gaigeshen
  */
 public class DefaultAccessTokenLogoutHandler extends AbstractAccessTokenLogoutHandler {
 
-    private DefaultAccessTokenLogoutHandler(AccessTokenCreator accessTokenCreator) {
+    public DefaultAccessTokenLogoutHandler(AccessTokenCreator accessTokenCreator) {
         super(accessTokenCreator);
-    }
-
-    public static DefaultAccessTokenLogoutHandler create(AccessTokenCreator accessTokenCreator) {
-        return new DefaultAccessTokenLogoutHandler(accessTokenCreator);
     }
 
     @Override

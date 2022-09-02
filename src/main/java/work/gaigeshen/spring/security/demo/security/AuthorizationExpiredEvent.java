@@ -3,6 +3,7 @@ package work.gaigeshen.spring.security.demo.security;
 import org.springframework.context.ApplicationEvent;
 
 /**
+ * 授权信息已过期事件，在需要主动失效授权信息的时候可以发布此事件
  *
  * @author gaigeshen
  */

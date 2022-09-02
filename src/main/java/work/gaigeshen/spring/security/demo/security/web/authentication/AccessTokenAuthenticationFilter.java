@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
+ * 访问令牌认证过滤器，此过滤器用于从认证请求对象中解析访问令牌从而得到授权信息
  *
  * @author gaigeshen
  */

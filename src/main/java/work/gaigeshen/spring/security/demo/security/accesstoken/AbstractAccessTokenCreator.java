@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 具体的访问令牌创建器继承此类
  *
  * @author gaigeshen
  */

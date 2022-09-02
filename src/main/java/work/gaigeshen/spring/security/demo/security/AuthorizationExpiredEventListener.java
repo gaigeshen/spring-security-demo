@@ -6,6 +6,7 @@ import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreat
 import java.util.Objects;
 
 /**
+ * 授权信息已过期事件监听器用于失效对应的访问令牌
  *
  * @author gaigeshen
  */

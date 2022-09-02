@@ -13,11 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import work.gaigeshen.spring.security.demo.security.AbstractAuthenticationProvider;
 import work.gaigeshen.spring.security.demo.security.AuthorizationExpiredEventListener;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
 import work.gaigeshen.spring.security.demo.security.accesstoken.DefaultAccessTokenCreator;
 import work.gaigeshen.spring.security.demo.security.web.authentication.AbstractAuthenticationFilter;
-import work.gaigeshen.spring.security.demo.security.web.authentication.AbstractAuthenticationProvider;
 import work.gaigeshen.spring.security.demo.security.web.authentication.AccessTokenAuthenticationFilter;
 import work.gaigeshen.spring.security.demo.security.web.logout.AbstractLogoutHandler;
 import work.gaigeshen.spring.security.demo.security.web.logout.DefaultAccessTokenLogoutHandler;
@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * 安全配置
+ *
  * @author gaigeshen
  */
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -69,27 +71,34 @@ public class SecurityConfiguration {
 
     @Bean
     public AbstractLogoutHandler logoutHandler() {
-        return DefaultAccessTokenLogoutHandler.create(accessTokenCreator());
+        return new DefaultAccessTokenLogoutHandler(accessTokenCreator());
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AbstractAuthenticationFilter authenticationFilter) throws Exception {
-        http.authenticationManager(authenticationManager())
-                        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.authenticationManager(authenticationManager());
 
-        http.csrf().disable().cors().configurationSource(request -> {
-            CorsConfiguration corsConfiguration = new CorsConfiguration();
-            corsConfiguration.setAllowCredentials(true);
-            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST"));
-            corsConfiguration.setAllowedHeaders(Collections.singletonList(CorsConfiguration.ALL));
-            corsConfiguration.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
-            corsConfiguration.setExposedHeaders(Collections.singletonList("X-Auth-Token"));
-            corsConfiguration.setMaxAge(Duration.ofMinutes(30));
-            return corsConfiguration;
+        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(accessTokenAuthenticationFilter(), authenticationFilter.getClass());
+
+        AbstractLogoutHandler logoutHandler = logoutHandler();
+        http.logout().addLogoutHandler(logoutHandler).logoutSuccessHandler(logoutHandler);
+
+        http.authorizeRequests().antMatchers("/login").permitAll().anyRequest().authenticated();
+
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.csrf().disable().cors().configurationSource(r -> {
+            CorsConfiguration cfg = new CorsConfiguration();
+            cfg.setAllowCredentials(true);
+            cfg.setAllowedMethods(Arrays.asList("GET", "POST"));
+            cfg.setAllowedHeaders(Collections.singletonList(CorsConfiguration.ALL));
+            cfg.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
+            cfg.setExposedHeaders(Collections.singletonList("X-Auth-Token"));
+            cfg.setMaxAge(Duration.ofMinutes(30));
+            return cfg;
         });
-        http.authorizeRequests().antMatchers("/login").permitAll().antMatchers("/register").permitAll().anyRequest().authenticated();
-        http.logout().addLogoutHandler(logoutHandler()).logoutSuccessHandler(logoutHandler()).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
     }
 }

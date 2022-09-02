@@ -4,6 +4,11 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * 默认的授权信息
+ *
+ * @author gaigeshen
+ */
 public class DefaultAuthorization implements Authorization {
 
     private final String userId;

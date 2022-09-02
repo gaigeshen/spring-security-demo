@@ -84,7 +84,7 @@ public abstract class AbstractAuthenticationFilter extends AbstractAuthenticatio
      * 从当前的认证请求对象中解析认证凭证并返回
      *
      * @param httpRequest 当前的认证请求对象
-     * @return 解析的认证凭证应该是未认证的
+     * @return 解析的认证凭证应该是未认证的，如果发现缺少必要的参数而无法创建认证凭证可以直接返回空对象
      * @throws AuthenticationException 可以抛出的异常
      */
     protected abstract AuthenticationToken resolveAuthenticationToken(HttpServletRequest httpRequest) throws AuthenticationException;
