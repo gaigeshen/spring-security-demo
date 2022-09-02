@@ -1,13 +1,9 @@
-package work.gaigeshen.spring.security.demo.commons.web;
+package work.gaigeshen.spring.security.demo.commons.web.error;
 
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.beans.PropertyBatchUpdateException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -17,8 +13,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
-import work.gaigeshen.spring.security.demo.security.AuthenticationTokenMissingException;
-import work.gaigeshen.spring.security.demo.security.AuthorizationNotFoundException;
+import work.gaigeshen.spring.security.demo.commons.web.Result;
+import work.gaigeshen.spring.security.demo.commons.web.Results;
+import work.gaigeshen.spring.security.demo.commons.web.ValidationError;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -46,9 +43,6 @@ public abstract class ErrorResults {
     }
 
     public static Result<?> createResult(Throwable ex) {
-        if (ex instanceof AuthenticationException) {
-            return createResult((AuthenticationException) ex);
-        }
         if (ex instanceof HttpRequestMethodNotSupportedException) {
             return Results.create(HttpStatusErrorResultCode.METHOD_NOT_ALLOWED);
         }
@@ -86,25 +80,6 @@ public abstract class ErrorResults {
             return Results.create(HttpStatusErrorResultCode.BAD_REQUEST, constraintViolationsDetail(violations));
         }
         return Results.create(HttpStatusErrorResultCode.INTERNAL_SERVER_ERROR);
-    }
-
-    public static Result<?> createResult(AuthenticationException ex) {
-        if (ex instanceof AuthenticationTokenMissingException) {
-            return Results.create(AuthenticationErrorResultCode.AUTHENTICATION_TOKEN_INVALID);
-        }
-        if (ex instanceof AuthorizationNotFoundException) {
-            return Results.create(AuthenticationErrorResultCode.AUTHENTICATION_TOKEN_INVALID);
-        }
-        if (ex instanceof DisabledException) {
-            return Results.create(AuthenticationErrorResultCode.ACCOUNT_DISABLED);
-        }
-        if (ex instanceof LockedException) {
-            return Results.create(AuthenticationErrorResultCode.ACCOUNT_LOCKED);
-        }
-        if (ex instanceof AccountExpiredException) {
-            return Results.create(AuthenticationErrorResultCode.ACCOUNT_EXPIRED);
-        }
-        return Results.create(AuthenticationErrorResultCode.AUTHENTICATE_FAILED);
     }
 
     private static ValidationError bindingResultDetail(BindingResult bindingResult) {

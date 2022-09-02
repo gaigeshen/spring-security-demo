@@ -1,5 +1,6 @@
 package work.gaigeshen.spring.security.demo.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,10 +16,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import work.gaigeshen.spring.security.demo.security.AbstractAuthenticationProvider;
 import work.gaigeshen.spring.security.demo.security.AuthorizationExpiredEventListener;
+import work.gaigeshen.spring.security.demo.security.DefaultAuthenticationProvider;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
 import work.gaigeshen.spring.security.demo.security.accesstoken.DefaultAccessTokenCreator;
+import work.gaigeshen.spring.security.demo.security.web.AbstractAccessDeniedHandler;
+import work.gaigeshen.spring.security.demo.security.web.DefaultAccessDeniedHandler;
 import work.gaigeshen.spring.security.demo.security.web.authentication.AbstractAuthenticationFilter;
 import work.gaigeshen.spring.security.demo.security.web.authentication.AccessTokenAuthenticationFilter;
+import work.gaigeshen.spring.security.demo.security.web.authentication.DefaultAuthenticationFilter;
 import work.gaigeshen.spring.security.demo.security.web.logout.AbstractLogoutHandler;
 import work.gaigeshen.spring.security.demo.security.web.logout.DefaultAccessTokenLogoutHandler;
 
@@ -46,17 +51,10 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager() {
+        if (authenticationProviders.isEmpty()) {
+            return new ProviderManager(new DefaultAuthenticationProvider());
+        }
         return new ProviderManager(new ArrayList<>(authenticationProviders));
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(4);
-    }
-
-    @Bean
-    public AccessTokenCreator accessTokenCreator() {
-        return DefaultAccessTokenCreator.create();
     }
 
     @Bean
@@ -69,18 +67,46 @@ public class SecurityConfiguration {
         return new AccessTokenAuthenticationFilter(accessTokenCreator());
     }
 
+    @ConditionalOnMissingBean
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(4);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public AccessTokenCreator accessTokenCreator() {
+        return DefaultAccessTokenCreator.create();
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public AbstractAccessDeniedHandler accessDeniedHandler() {
+        return new DefaultAccessDeniedHandler();
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public AbstractAuthenticationFilter authenticationFilter() {
+        return new DefaultAuthenticationFilter(authenticationManager(), accessTokenCreator());
+    }
+
+    @ConditionalOnMissingBean
     @Bean
     public AbstractLogoutHandler logoutHandler() {
         return new DefaultAccessTokenLogoutHandler(accessTokenCreator());
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AbstractAuthenticationFilter authenticationFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authenticationManager(authenticationManager());
 
+        AbstractAuthenticationFilter authenticationFilter = authenticationFilter();
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         http.addFilterBefore(accessTokenAuthenticationFilter(), authenticationFilter.getClass());
+
+        AbstractAccessDeniedHandler accessDeniedHandler = accessDeniedHandler();
+        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(accessDeniedHandler);
 
         AbstractLogoutHandler logoutHandler = logoutHandler();
         http.logout().addLogoutHandler(logoutHandler).logoutSuccessHandler(logoutHandler);
@@ -90,14 +116,14 @@ public class SecurityConfiguration {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.csrf().disable().cors().configurationSource(r -> {
-            CorsConfiguration cfg = new CorsConfiguration();
-            cfg.setAllowCredentials(true);
-            cfg.setAllowedMethods(Arrays.asList("GET", "POST"));
-            cfg.setAllowedHeaders(Collections.singletonList(CorsConfiguration.ALL));
-            cfg.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
-            cfg.setExposedHeaders(Collections.singletonList("X-Auth-Token"));
-            cfg.setMaxAge(Duration.ofMinutes(30));
-            return cfg;
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowCredentials(true);
+            config.setAllowedMethods(Arrays.asList("GET", "POST"));
+            config.setAllowedHeaders(Collections.singletonList(CorsConfiguration.ALL));
+            config.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
+            config.setExposedHeaders(Collections.singletonList("X-Auth-Token"));
+            config.setMaxAge(Duration.ofMinutes(30));
+            return config;
         });
         return http.build();
     }

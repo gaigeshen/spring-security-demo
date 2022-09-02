@@ -1,4 +1,6 @@
-package work.gaigeshen.spring.security.demo.commons.web;
+package work.gaigeshen.spring.security.demo.security.web.error;
+
+import work.gaigeshen.spring.security.demo.commons.web.ResultCode;
 
 /**
  * @author gaigeshen
