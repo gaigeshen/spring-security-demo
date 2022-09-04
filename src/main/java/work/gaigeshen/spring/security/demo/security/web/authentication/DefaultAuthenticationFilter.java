@@ -17,6 +17,8 @@ import work.gaigeshen.spring.security.demo.security.web.AuthenticationErrorResul
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
@@ -51,12 +53,15 @@ public class DefaultAuthenticationFilter extends AbstractAuthenticationFilter {
     protected void onSuccess(HttpServletResponse httpResponse, AuthenticationToken token) throws IOException {
         if (!token.isAuthenticated()) {
             renderResponse(httpResponse, Results.create());
-        } else {
-            Authorization authorization = token.getAuthorization();
-            String accessToken = accessTokenCreator.createToken(authorization);
-            httpResponse.setHeader(AccessTokenAuthenticationFilter.ACCESS_TOKEN_HEADER, accessToken);
-            renderResponse(httpResponse, Results.create(authorization));
+            return;
         }
+        Authorization authorization = token.getAuthorization();
+        String accessToken = accessTokenCreator.createToken(authorization);
+        httpResponse.setHeader(AccessTokenAuthenticationFilter.ACCESS_TOKEN_HEADER, accessToken);
+        Map<String, Object> resultData = new LinkedHashMap<>();
+        resultData.put("token", accessToken);
+        resultData.put("authorization", authorization);
+        renderResponse(httpResponse, Results.create(resultData));
     }
 
     @Override
