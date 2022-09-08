@@ -57,7 +57,7 @@ public class DefaultAuthenticationFilter extends AbstractAuthenticationFilter {
         }
         Authorization authorization = token.getAuthorization();
         String accessToken = accessTokenCreator.createToken(authorization);
-        httpResponse.setHeader(AccessTokenAuthenticationFilter.ACCESS_TOKEN_HEADER, accessToken);
+        httpResponse.setHeader(AccessTokenAutoAuthenticationFilter.ACCESS_TOKEN_HEADER, accessToken);
         Map<String, Object> resultData = new LinkedHashMap<>();
         resultData.put("token", accessToken);
         resultData.put("authorization", authorization);

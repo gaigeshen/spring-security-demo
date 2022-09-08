@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import work.gaigeshen.spring.security.demo.security.AuthenticationToken;
 import work.gaigeshen.spring.security.demo.security.Authorization;
 import work.gaigeshen.spring.security.demo.security.accesstoken.AccessTokenCreator;
-import work.gaigeshen.spring.security.demo.security.web.authentication.AccessTokenAuthenticationFilter;
+import work.gaigeshen.spring.security.demo.security.web.authentication.AccessTokenAutoAuthenticationFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ public abstract class AbstractAccessTokenLogoutHandler extends AbstractLogoutHan
                 accessTokenCreator.invalidate(authorization);
             }
         }
-        String accessToken = request.getHeader(AccessTokenAuthenticationFilter.ACCESS_TOKEN_HEADER);
+        String accessToken = request.getHeader(AccessTokenAutoAuthenticationFilter.ACCESS_TOKEN_HEADER);
         if (StringUtils.isNotBlank(accessToken)) {
             accessTokenCreator.invalidate(accessToken);
         }

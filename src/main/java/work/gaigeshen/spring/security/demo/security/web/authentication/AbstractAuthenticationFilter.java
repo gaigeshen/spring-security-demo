@@ -44,6 +44,10 @@ public abstract class AbstractAuthenticationFilter extends AbstractAuthenticatio
         return getAuthenticationManager().authenticate(authenticationToken);
     }
 
+    public AuthenticationManager getAuthenticationManager() {
+        return super.getAuthenticationManager();
+    }
+
     /**
      * 返回的对象将会直接被设置到认证凭证中
      *
