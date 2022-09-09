@@ -15,9 +15,11 @@ public interface JsonCodec {
 
     String encode(Object obj);
 
-    <T> T decode(String json, Class<T> resultClass);
+    <T> T decodeObject(String json, Class<T> resultClass);
+
+    <E> Collection<E> decodeCollection(String json, Class<E> itemClass);
 
     Map<String, Object> decodeObject(String json);
 
-    Collection<Object> decodeArray(String json);
+    Collection<Object> decodCollection(String json);
 }

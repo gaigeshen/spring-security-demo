@@ -35,9 +35,18 @@ public class JacksonJsonCodec implements JsonCodec {
     }
 
     @Override
-    public <T> T decode(String json, Class<T> resultClass) {
+    public <T> T decodeObject(String json, Class<T> resultClass) {
         try {
             return objectMapper.readValue(json, resultClass);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public <E> Collection<E> decodeCollection(String json, Class<E> itemClass) {
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<E>>() { });
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
@@ -53,7 +62,7 @@ public class JacksonJsonCodec implements JsonCodec {
     }
 
     @Override
-    public Collection<Object> decodeArray(String json) {
+    public Collection<Object> decodCollection(String json) {
         try {
             return objectMapper.readValue(json, new TypeReference<List<Object>>() { });
         } catch (Exception e) {

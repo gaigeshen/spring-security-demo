@@ -71,7 +71,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AbstractAutoAuthenticationFilter accessTokenAuthenticationFilter() {
+    public AbstractAutoAuthenticationFilter autoAuthenticationFilter() {
         return new AccessTokenAutoAuthenticationFilter(accessTokenCreator());
     }
 
@@ -86,7 +86,7 @@ public class SecurityConfiguration {
         http.authenticationManager(authenticationFilter.getAuthenticationManager());
 
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(accessTokenAuthenticationFilter(), authenticationFilter.getClass());
+        http.addFilterBefore(autoAuthenticationFilter(), authenticationFilter.getClass());
 
         AbstractAccessDeniedHandler accessDeniedHandler = accessDeniedHandler();
         http.exceptionHandling()

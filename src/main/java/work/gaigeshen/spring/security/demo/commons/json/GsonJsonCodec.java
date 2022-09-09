@@ -1,8 +1,13 @@
 package work.gaigeshen.spring.security.demo.commons.json;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 
-import java.util.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author gaigeshen
@@ -28,8 +33,14 @@ public class GsonJsonCodec implements JsonCodec {
     }
 
     @Override
-    public <T> T decode(String json, Class<T> resultClass) {
+    public <T> T decodeObject(String json, Class<T> resultClass) {
         return gson.fromJson(json, resultClass);
+    }
+
+    @Override
+    public <E> Collection<E> decodeCollection(String json, Class<E> itemClass) {
+        Type type = new TypeToken<ArrayList<E>>() { }.getType();
+        return gson.fromJson(json, type);
     }
 
     @Override
@@ -38,7 +49,7 @@ public class GsonJsonCodec implements JsonCodec {
     }
 
     @Override
-    public Collection<Object> decodeArray(String json) {
+    public Collection<Object> decodCollection(String json) {
         return convertArray(JsonParser.parseString(json).getAsJsonArray());
     }
 
