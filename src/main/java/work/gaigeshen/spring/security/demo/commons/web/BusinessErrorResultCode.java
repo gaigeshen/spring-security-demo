@@ -1,19 +1,18 @@
-package work.gaigeshen.spring.security.demo.security.web;
-
-import work.gaigeshen.spring.security.demo.commons.web.ResultCode;
+package work.gaigeshen.spring.security.demo.commons.web;
 
 /**
+ *
  * @author gaigeshen
  */
-public enum AccessDeniedErrorResultCode implements ResultCode {
+public enum BusinessErrorResultCode implements ResultCode {
 
-    ACCESS_DENIED(7000, "Access Denied");
+    BUSINESS_ERROR(6000, "Business Error");
 
     private final int code;
 
     private final String message;
 
-    AccessDeniedErrorResultCode(int code, String message) {
+    BusinessErrorResultCode(int code, String message) {
         this.code = code;
         this.message = message;
     }

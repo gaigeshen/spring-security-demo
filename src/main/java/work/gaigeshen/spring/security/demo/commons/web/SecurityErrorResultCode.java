@@ -1,11 +1,11 @@
-package work.gaigeshen.spring.security.demo.security.web;
-
-import work.gaigeshen.spring.security.demo.commons.web.ResultCode;
+package work.gaigeshen.spring.security.demo.commons.web;
 
 /**
  * @author gaigeshen
  */
-public enum AuthenticationErrorResultCode implements ResultCode {
+public enum SecurityErrorResultCode implements ResultCode {
+
+    ACCESS_DENIED(7000, "Access Denied"),
 
     AUTHENTICATE_FAILED(8000, "Authenticate Failed"),
 
@@ -21,7 +21,7 @@ public enum AuthenticationErrorResultCode implements ResultCode {
 
     private final String message;
 
-    AuthenticationErrorResultCode(int code, String message) {
+    SecurityErrorResultCode(int code, String message) {
         this.code = code;
         this.message = message;
     }

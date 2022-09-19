@@ -5,6 +5,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import work.gaigeshen.spring.security.demo.commons.exception.BusinessErrorException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -22,6 +23,9 @@ public abstract class ErrorResults {
     private ErrorResults() { }
 
     public static Result<?> createResult(Throwable ex, int httpStatus) {
+        if (ex instanceof BusinessErrorException) {
+            return BusinessErrorResults.createResult((BusinessErrorException) ex);
+        }
         switch (httpStatus) {
             case 400:
                 if (ex instanceof MethodArgumentNotValidException) {
