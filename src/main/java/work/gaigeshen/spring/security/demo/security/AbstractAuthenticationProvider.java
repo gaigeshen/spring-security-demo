@@ -3,6 +3,8 @@ package work.gaigeshen.spring.security.demo.security;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import work.gaigeshen.spring.security.demo.security.userdetails.UserDetails;
+import work.gaigeshen.spring.security.demo.security.userdetails.UserDetailsChecker;
 
 import java.util.Objects;
 
@@ -18,6 +20,9 @@ public abstract class AbstractAuthenticationProvider implements AuthenticationPr
         Authorization authorization = authenticate((AuthenticationToken) authentication);
         if (Objects.isNull(authorization)) {
             throw new AuthorizationNotFoundException("authorization of " + authentication + " not found");
+        }
+        if (authorization instanceof UserDetails) {
+            UserDetailsChecker.check((UserDetails) authentication);
         }
         return AuthenticationToken.authenticated(authorization, authentication.getCredentials());
     }
