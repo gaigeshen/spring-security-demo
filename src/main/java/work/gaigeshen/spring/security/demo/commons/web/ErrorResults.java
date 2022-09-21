@@ -4,7 +4,6 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import work.gaigeshen.spring.security.demo.commons.exception.BusinessErrorException;
 
 import javax.validation.ConstraintViolation;
@@ -28,10 +27,6 @@ public abstract class ErrorResults {
         }
         switch (httpStatus) {
             case 400:
-                if (ex instanceof MethodArgumentNotValidException) {
-                    BindingResult bindingResult = ((MethodArgumentNotValidException) ex).getBindingResult();
-                    return Results.create(BAD_REQUEST, bindingResultDetail(bindingResult));
-                }
                 if (ex instanceof BindException) {
                     BindingResult bindingResult = ((BindException) ex).getBindingResult();
                     return Results.create(BAD_REQUEST, bindingResultDetail(bindingResult));
